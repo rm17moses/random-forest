@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <h1 class="text-center mb-4">History</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Cd Value</th>
+                    <th>Cr Value</th>
+                    <th>Ni Value</th>
+                    <th>Pb Value</th>
+                    <th>Zn Value</th>
+                    <th>Cu Value</th>
+                    <th>Co Value</th>
+                    <th>Predicted Label</th>
+                    <!-- Add other column headers here -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in user_data %}
+                    <tr>
+                        <td>{{ row[2] }}</td> <!-- Latitude (assuming it's the third column, index 2) -->
+                        <td>{{ row[3] }}</td> <!-- Longitude (assuming it's the fourth column, index 3) -->
+                        <td>{{ row[4] }}</td> <!-- Cd Value -->
+                        <td>{{ row[5] }}</td> <!-- Cr Value -->
+                        <td>{{ row[6] }}</td> <!-- Ni Value -->
+                        <td>{{ row[7] }}</td> <!-- Pb Value -->
+                        <td>{{ row[8] }}</td> <!-- Zn Value -->
+                        <td>{{ row[9] }}</td> <!-- Cu Value -->
+                        <td>{{ row[10] }}</td> <!-- Co Value -->
+                        <td>{{ row[11] }}</td> <!-- Predicted Label -->
+                        <!-- Add other column values here -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container text-center">
+        <form action="/predictor">
+            <input type="submit" class="btn btn-primary" value="Input Values">
+        </form>
+    </div>
+</body>
+</html>
