@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+    <style>
+        body.loading {
+            background-color: rgba(255, 255, 255, 0.5);
+            /* Semi-transparent white background */
+        }
+
+        .loading-spinner {
+            display: none;
+            font-size: 30px;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-spinner img {
+            width: 100px;
+            /* Adjust the width */
+            height: 100px;
+            /* Adjust the height */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Upload a File</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="uploadFile(event)">
+        <input type="file" name="file" id="fileInput">
+        <input type="submit" value="Upload">
+        <div id="progress"></div>
+    </form>
+
+    <div class="loading-spinner" id="loading-spinner">
+        <img src="/static/images/Green_Nature_Logo-removebg-preview.png" alt="logo"><br>
+        Processing... Please Wait
+    </div>
+
+    <!-- Add this button to your HTML file -->
+    <button onclick="viewDatabase()">View Database</button>
+
+
+
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function () {
+            document.body.classList.add('loading'); // Add 'loading' class to body
+            document.getElementById('loading-spinner').style.display = 'block';
+        });
+
+        function viewDatabase() {
+            window.location.href = '/user_data';
+        };
+
+        function uploadFile(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById('fileInput');
+            formData.append('file', fileInput.files[0]);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload', true);
+
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    document.getElementById('progress').innerText = `Progress: ${Math.round(percentComplete)}%`;
+                }
+            };
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.result_filename) {
+                        window.location.href = `/download/${response.result_filename}`;
+                    } else {
+                        alert('Invalid file type');
+                    }
+                } else {
+                    alert('Error uploading file');
+                }
+            };
+
+            xhr.send(formData);
+        }
+    </script>
+</body>
+
+</html>
