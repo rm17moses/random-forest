@@ -17,7 +17,11 @@
         <header>
             <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="container">
-                    <h3 class="groupNo">GROUP 15</h3>
+                    <a class="navbar-brand bg-transparent" href="#">
+                        <img src="/static/images/Green_Nature_Logo-removebg-preview.png" alt="Logo" width="50"
+                            height="50" class="d-inline-block align-text-top">
+                    </a>
+                    <!-- <h3 class="groupNo">GROUP 15</h3>  -->
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -34,9 +38,12 @@
                                 <a class="nav-link" href="{{ url_for('predict') }}">Soil Prediction</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('show_map') }}">Map</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('soil_quality_standards') }}">Soil Quality
                                     Standards</a>
-                            </li>
+                            </li>                            
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('contact_us') }}">Contact Us</a>
                             </li>

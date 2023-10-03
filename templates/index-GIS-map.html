@@ -13,14 +13,19 @@
 
     <div class="wrapper">
         <header>
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="container">
-                    <h3 class="groupNo">GROUP 15</h3>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <a class="navbar-brand bg-transparent" href="#">
+                        <img src="/static/images/Green_Nature_Logo-removebg-preview.png" alt="Logo" width="50"
+                            height="50" class="d-inline-block align-text-top">
+                    </a>
+                    <!-- <h3 class="groupNo">GROUP 15</h3>  -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav">
+                        <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('index') }}">Home</a>
                             </li>
@@ -31,8 +36,12 @@
                                 <a class="nav-link" href="{{ url_for('predict') }}">Soil Prediction</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('soil_quality_standards') }}">Soil Quality Standards</a>
+                                <a class="nav-link" href="{{ url_for('show_map') }}">Map</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('soil_quality_standards') }}">Soil Quality
+                                    Standards</a>
+                            </li>                            
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('contact_us') }}">Contact Us</a>
                             </li>
@@ -44,11 +53,7 @@
     </div>
 
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="">
-                {% include 'map.html' %}
-            </div>
-        </div>
+        {% include 'map.html' %}
     </div>
 
     

@@ -6,6 +6,8 @@ from sklearn.preprocessing import LabelEncoder
 import os
 from werkzeug.utils import secure_filename
 import json
+import geopandas as gpd
+import folium
 
 
 
@@ -125,6 +127,18 @@ def process_excel_file(filename):
 
     return result_filename
 
+def fetch_user_data():
+    conn = sqlite3.connect('prediction.db')
+    c = conn.cursor()
+    c.execute('SELECT latitude, longitude FROM user_data')
+    user_data = c.fetchall()
+    conn.close()
+    return user_data
+
+@app.route('/show_map')
+def show_map():
+    user_data = fetch_user_data()
+    return render_template('map.html', user_data=user_data)
 
 
 # Define a route for the login page
