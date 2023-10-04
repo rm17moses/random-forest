@@ -6,76 +6,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File</title>
     <link rel="stylesheet" href="/static/style.css">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="/static/scripts.js"></script>
     <style>
-        body.loading {
-            background-color: rgba(255, 255, 255, 0.5);
-            /* Semi-transparent white background */
-        }
-
-        .loading-spinner {
-            display: none;
-            font-size: 30px;
-            text-align: center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .loading-spinner img {
-            width: 100px;
-            /* Adjust the width */
-            height: 100px;
-            /* Adjust the height */
+        body {
+            background-color: #dad7cd;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         }
     </style>
 </head>
 
-<body>
+<body x-data="prediction">
+
 
     <div class="wrapper">
         <header>
             <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="container">
                     <a class="navbar-brand bg-transparent" href="#">
-                        <img src="/static/images/Green_Nature_Logo-removebg-preview.png" alt="Logo" width="50"
-                            height="50" class="d-inline-block align-text-top">
+                        <img src="/static/images/Green_Nature_Logo-removebg-preview.png" style="background-color: #fff;"
+                            alt="Logo" width="50" height="50" class="d-inline-block p-1 align-text-top">
                     </a>
-                    <!-- <h3 class="groupNo">GROUP 15</h3>  -->
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav ms-auto">
-                            <li class="nav-item">
+                            <li class="nav-item me-3">
                                 <a class="nav-link" href="{{ url_for('index') }}">Home</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item me-3">
                                 <a class="nav-link" href="{{ url_for('about_us') }}">About Us</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item me-3">
                                 <a class="nav-link" href="{{ url_for('predict') }}">Soil Prediction</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('show_map') }}">Map</a>
+                            <li class="nav-item me-3">
+                                <a class="nav-link" href=" ">Map</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item me-3">
                                 <a class="nav-link" href="{{ url_for('soil_quality_standards') }}">Soil Quality
                                     Standards</a>
-                            </li>                            
-                            <li class="nav-item">
+                            </li>
+                            <li class="nav-item me-3">
                                 <a class="nav-link" href="{{ url_for('contact_us') }}">Contact Us</a>
+                            </li>
+                            <li class="my-auto nav-item me-3">
+                                <form action="/logout">
+                                    <input type="submit" class="btn btn-sm fw-bold btn-danger" value="Logout">
+                                </form>
                             </li>
                         </ul>
                     </div>
@@ -91,7 +77,7 @@
         <div id="progress"></div>
     </form>
 
-        <p>Are you sure you want to clear your database entries?</p>
+    <p>Are you sure you want to clear your database entries?</p>
     <form action="/clear_database" method="post">
         <button type="submit">Yes, Clear Database</button>
     </form>
@@ -164,8 +150,8 @@
                 document.getElementById('loading-spinner').style.display = 'none';
             };
 
-           xhr.send(formData); // Send the form data
-       }
+            xhr.send(formData); // Send the form data
+        }
     </script>
 </body>
 

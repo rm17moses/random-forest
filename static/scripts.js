@@ -3,7 +3,12 @@ document.addEventListener("alpine:init", () => {
     return {
       show: false,
       predict: false,
-
+      data: false,
+      recommend: false,
+      low: false,
+      moderate: false,
+      high: false,
+      very_high: false,
 
     }
   })

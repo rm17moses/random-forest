@@ -57,7 +57,7 @@ def upload_file():
 
 @app.route('/download/<result_filename>')
 def download_result(result_filename):
-    return send_file(os.path.join(app.config['UPLOAD_FOLDER'], result_filename), as_attachment=True)
+    return send_file(os.path.join(app.config['UPLOAD_FOLDER'], result_filename), as_attachment=True, mimetype = 'application/pdf')
 
 @app.route('/process/<filename>', methods=['GET', 'POST'])
 def process_uploaded_file(filename):
@@ -127,20 +127,6 @@ def process_excel_file(filename):
 
     return result_filename
 
-def fetch_user_data():
-    conn = sqlite3.connect('prediction.db')
-    c = conn.cursor()
-    c.execute('SELECT latitude, longitude FROM user_data')
-    user_data = c.fetchall()
-    conn.close()
-    return user_data
-
-@app.route('/show_map')
-def show_map():
-    user_data = fetch_user_data()
-    return render_template('map.html', user_data=user_data)
-
-
 # Define a route for the login page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -158,15 +144,34 @@ def username_exists(username):
     conn.close()
     return result is not None
 
-# Add a logout route
 @app.route('/logout')
 def logout():
+    if 'username' in session:
+        clear_user_workspace()
+        session.pop('username', None)
+    return redirect(url_for('login'))
+
+def clear_user_workspace():
+    conn = sqlite3.connect('prediction.db')
+    c = conn.cursor()
+    c.execute('DELETE FROM user_data')
+    conn.commit()
+    conn.close()
+
+@app.route('/clear_workspace', methods=['POST'])
+def clear_workspace():
+    conn = sqlite3.connect('prediction.db')
+    c = conn.cursor()
+    c.execute('DELETE FROM user_data')
+    conn.commit()
+    conn.close()
+
     session.pop('username', None)
     return redirect(url_for('login'))
 
-# Add a check for logged in users
 def check_logged_in():
     return 'username' in session
+
 
 @app.route('/')
 def index():
@@ -174,6 +179,7 @@ def index():
         return redirect(url_for('login'))
     username = session.get('username')
     return render_template('index-homepage.html', name=username)
+
 
 @app.route('/contact_us')
 def contact_us():
@@ -209,11 +215,51 @@ def has_exceeded_limit(username):
     conn.close()
     return count >= 150
 
+@app.route('/save_data', methods=['POST'])
+def save_data():
+    data = request.get_json()
+
+    # Insert the data into the database
+    conn = sqlite3.connect('prediction.db')
+    c = conn.cursor()
+    c.execute('''INSERT INTO user_data
+                 (username, latitude, longitude, cd_value, cr_value, ni_value, pb_value, zn_value, cu_value, co_value)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+              (data['username'], data['latitude'], data['longitude'], data['cd_value'], data['cr_value'], data['ni_value'],
+               data['pb_value'], data['zn_value'], data['cu_value'], data['co_value']))
+    conn.commit()
+    conn.close()
+
+    # Clear the input fields
+    cleared_fields = ['latitude', 'longitude', 'cd_value', 'cr_value', 'ni_value', 'pb_value', 'zn_value', 'cu_value', 'co_value']
+
+    return jsonify({'message': 'Data saved successfully', 'cleared_fields': cleared_fields}), 200
+
+
+@app.route('/prediction_result', methods=['GET', 'POST'])
+def prediction_result():
+    if request.method == 'POST':
+        conn = sqlite3.connect('prediction.db')
+        c = conn.cursor()
+        c.execute('SELECT * FROM user_data WHERE username=? ORDER BY id DESC LIMIT 1', (session['username'],))
+        result = c.fetchone()
+        conn.close()
+
+        if result is not None:
+            predicted_label = result[-1]  # Assuming the predicted label is the last column
+            latitude = result[2]  # Assuming latitude is the third column
+            longitude = result[3]  # Assuming longitude is the fourth column
+            return render_template('prediction_result.html', predicted_label=predicted_label, latitude=latitude, longitude=longitude)
+        else:
+            return render_template('error.html', message="No recent prediction found.")
+
+    return redirect(url_for('predict'))
+
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
     latitude = None
     longitude = None
-    
+
     if request.method == 'POST':
         # Handle the POST request
         latitude = request.form.get('latitude')
@@ -266,8 +312,7 @@ def predict():
     if has_exceeded_limit(session['username']):
         return render_template('error.html', message="You have reached the maximum limit of 150 entries.", show_clear_database_button=True)
 
-
-        # Check for duplicate entry
+    # Check for duplicate entry
     if username_exists(session['username'], latitude, longitude):
         return render_template('error.html', message="You have already submitted an entry with these coordinates.")
 
@@ -275,7 +320,8 @@ def predict():
         # Handle the GET request
         if not check_logged_in():
             return redirect(url_for('login'))
-        return render_template('prediction.html')
+        return render_template('prediction.html', latitude=latitude, longitude=longitude)
+
     
 # Helper function to check for duplicate entry
 def username_exists(username, latitude, longitude):
@@ -296,8 +342,10 @@ def user_data():
     c.execute('SELECT * FROM user_data WHERE username=?', (session['username'],))
     user_data = c.fetchall()
     conn.close()
+    username = request.form.get('username')
 
-    return render_template('user_data.html', user_data=user_data)
+
+    return render_template('user_data.html', user_data=user_data, name=username)
 
 @app.route('/clear_database', methods=['GET', 'POST'])
 def clear_database():
@@ -310,8 +358,23 @@ def clear_database():
         conn.close()
         
         return redirect(url_for('index'))
-        
+
+    # Check if the database is empty
+    conn = sqlite3.connect('prediction.db')
+    c = conn.cursor()
+    c.execute('SELECT COUNT(*) FROM user_data WHERE username=?', (session['username'],))
+    count = c.fetchone()[0]
+    conn.close()
+
+    session['database_empty'] = True
+
+    print("Value of database_empty: ", session.get('database_empty'))
+
+    if count == 0:
+        return render_template('clear_database.html')
+
     return render_template('clear_database.html')
+
 
 
 def init_db():
