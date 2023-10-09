@@ -15,6 +15,7 @@
     <script src="//unpkg.com/alpinejs" defer></script>
     <script src="/static/scripts.js"></script>
     <script src="/static/prediction.js"></script>
+    <!-- <script src="/static/load.js"></script> -->
     <style>
         body {
             background-color: #dad7cd;
@@ -71,43 +72,53 @@
         </header>
     </div>
 
-    <h6>You can either <a href="{{ url_for('user_upload') }}">Upload</a> or input manually below.</h6>
+    <div class="container mb-3">
+        <h1 class="text-center mb-4">Contamination Prediction</h1>
+        <p style="text-align: center;">Soil contamination prediction based on heavy elements is a crucial aspect of
+            environmental science. It involves the use of various methods to forecast the potential spread and impact of
+            heavy metal pollutants in the soil. Predicting soil contamination based on heavy elements is crucial as it
+            helps in taking proactive measures to control pollution and protect public health.</p>
+        <p>To test the level of Contamination of your soil sample(s), you can either upload an <b>excel</b> or manually
+            input values below.</p>
+        <p><em>Take Note</em>: ensure that column names are <b>"Latitude"</b> and <b>"Longitude"</b> for coordinates,
+            and <b>"Cd_value", "Cr_value", "Ni_value", "Pb_value", "Zn_value", "Cu_value"</b> and <b> "Co_value"</b> for heavy metals.
+        </p>
+
+        <hr>
+
+        <div class="container text-center">
+            <h2 class="text-center">Upload File</h2>
+            <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data"
+                onsubmit="uploadFile(event)">
+                <input type="file" class="btn btn-warning btn-sm px-3" name="file" id="fileInput">
+                <input type="submit" class="btn btn-success fw-bold" value="Upload">
+                <div id="progress"></div>
+            </form>
+
+            <form action="/user_data">
+                <input type="submit" class="btn btn-primary fw-bold my-3" value="View Data">
+            </form>
+
+            <div class="loading-overlay" id="loadingOverlay">
+                <img src="/static/images/Green_Nature_Logo-removebg-preview.png" alt="logo"><br>
+                <div class="loading-text">Processing... Please Wait</div>
+                <div class="progress">
+                    <div class="progress-bar bg-success" id="progress-bar" role="progressbar"></div>
+                </div>
+            </div>
 
 
-    <div class="container my-5">
-        <h1 class="text-center mb-4">Contamination Predictor</h1>
+        </div>
+        <!-- <h6>You can either <a href="{{ url_for('user_upload') }}">Upload</a> or input manually below.</h6> -->
+        <hr>
+
 
         <form id="predictionForm" action="{{ url_for('predict') }}" method="post" class="row g-3">
 
 
-            <div class="col-md-6">
-
-            </div>
-
-            <div class="col-md-6">
-
-            </div>
-
-            <div class="col-md-6">
-
-            </div>
-
-            <div class="col-md-6">
-
-            </div>
-
-            <div class="col-md-6">
-
-            </div>
-
-            <div class="col-md-6">
-            </div>
-
-            <div class="col-md-6">
-            </div>
-
             <div class="container text-center">
-                <h2>Input Coordinates</h2>
+                <h2 class="my-3">Manually Input Values</h2>
+                <h4 class="mb-4">Coordinates</h4>
                 <div class="row justify-content-center">
                     <div class="col-md-3 mb-2">
                         <label for="latitude">Latitude:</label>
@@ -119,44 +130,45 @@
                     </div>
                 </div>
             </div>
-            <hr>
-            <h2>Heavy Metal Concentrations</h2>
+            <h4 class="my-4 text-center">Heavy Metal Concentrations (mg/kg)</h4>
             <div class="row">
                 <div class="col-md-3 mx-auto ml-2 mr-2">
-                    <label for="cd_value" class="form-label">Cadmium(Cd):</label>
+                    <label for="cd_value" class="form-label text-center">Cadmium (Cd):</label>
                     <input type="text" class="form-control" id="cd_value" name="cd_value">
                 </div>
                 <div class="col-md-3 mx-auto ml-2 mr-2">
-                    <label for="cr_value" class="form-label">Chromium(Cr):</label>
+                    <label for="cr_value" class="form-label">Chromium (Cr):</label>
                     <input type="text" class="form-control" id="cr_value" name="cr_value">
                 </div>
                 <div class="col-md-3 mx-auto ml-2 mr-2">
-                    <label for="ni_value" class="form-label">Nickel(Ni):</label>
+                    <label for="ni_value" class="form-label">Nickel (Ni):</label>
                     <input type="text" class="form-control" id="ni_value" name="ni_value">
                 </div>
             </div>
 
             <br>
+            <br>
 
-            <div class="row">
+            <div class="row mt-4">
                 <div class="col-md-3 mx-auto ml-2 mr-2">
-                    <label for="pb_value" class="form-label">Lead(Pb):</label>
+                    <label for="pb_value" class="form-label">Lead (Pb):</label>
                     <input type="text" class="form-control" id="pb_value" name="pb_value">
                 </div>
                 <div class="col-md-3 mx-auto ml-2 mr-2">
-                    <label for="zn_value" class="form-label">Zinc(Zn):</label>
+                    <label for="zn_value" class="form-label">Zinc (Zn):</label>
                     <input type="text" class="form-control" id="zn_value" name="zn_value">
                 </div>
                 <div class="col-md-3 mx-auto ml-2 mr-2">
-                    <label for="cu_value" class="form-label">Copper(Cu):</label>
+                    <label for="cu_value" class="form-label">Copper (Cu):</label>
                     <input type="text" class="form-control" id="cu_value" name="cu_value">
                 </div>
 
             </div>
 
             <br>
-            <div class="col-md-3 mx-auto ml-2 mr-2">
-                <label for="co_value" class="form-label">Cobalt(Co):</label>
+            <br>
+            <div class="col-md-3 mx-auto">
+                <label for="co_value" class="form-label">Cobalt (Co):</label>
                 <input type="text" class="form-control" id="co_value" name="co_value">
             </div>
 
@@ -183,7 +195,57 @@
         </div>
     </footer>
     <script>
+        // Event listener for form submission
+        document.getElementById('upload-form').addEventListener('submit', function () {
+            document.getElementById('loadingOverlay').style.display = 'flex'; // Show loading overlay
+        });
 
+        // Function to handle file upload
+        function uploadFile(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById('fileInput');
+            formData.append('file', fileInput.files[0]);
+
+            // Create a new XMLHttpRequest object
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload', true);
+
+            // Event listener for progress
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    document.getElementById('progress').innerText = `Progress: ${Math.round(percentComplete)}%`;
+                    // Update progress bar width
+                    document.getElementById('progress-bar').style.width = `${Math.round(percentComplete)}%`;
+                }
+            };
+
+            // Event listener for when the upload is complete
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.result_filename) {
+                        var download = confirm("Do you want to download your results file?");
+                        if (download == true) {
+                            window.location.href = `/download/${response.result_filename}`;
+                            document.getElementById('progress-bar').innerText = 'Analysis done and file has been downloaded';
+                        } else {
+                            alert("You chose not to download the file.");
+                        }
+                    } else {
+                        alert('Invalid file type');
+                    }
+                } else {
+                    alert('Error uploading file');
+                }
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
+            };
+
+            // Send the form data
+            xhr.send(formData);
+        }
     </script>
 
 </body>

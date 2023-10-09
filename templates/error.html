@@ -81,7 +81,9 @@
 
         <div class="error-links">
             {% if show_clear_database_button %}
-            <a href="{{ url_for('clear_database') }}">Clear Database</a>
+            <form action="/clear_database" method="post">
+                <a href="#"><button  type="submit">Clear Database</button></a>
+            </form>
             {% endif %}
 
             <a href="{{ url_for('index') }}">Go back to homepage</a>

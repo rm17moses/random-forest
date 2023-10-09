@@ -152,22 +152,27 @@ def logout():
     return redirect(url_for('login'))
 
 def clear_user_workspace():
-    conn = sqlite3.connect('prediction.db')
-    c = conn.cursor()
-    c.execute('DELETE FROM user_data')
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect('prediction.db')
+        c = conn.cursor()
+        c.execute('DELETE FROM user_data')
+        conn.commit()
+    except Exception as e:
+        print(f"Error clearing workspace: {e}")
+    finally:
+        conn.close()
 
-@app.route('/clear_workspace', methods=['POST'])
+
+@app.route('/clear_workspace', methods=['GET', 'POST'])
 def clear_workspace():
-    conn = sqlite3.connect('prediction.db')
-    c = conn.cursor()
-    c.execute('DELETE FROM user_data')
-    conn.commit()
-    conn.close()
+    if request.method == 'POST':
+        clear_user_workspace()  # Call the function to clear the database
 
-    session.pop('username', None)
-    return redirect(url_for('login'))
+        session.pop('username', None)  # Clear the session
+        return redirect(url_for('login'))
+
+    return render_template('clear_workspace.html')
+
 
 def check_logged_in():
     return 'username' in session
@@ -350,14 +355,10 @@ def user_data():
 @app.route('/clear_database', methods=['GET', 'POST'])
 def clear_database():
     if request.method == 'POST':
-        # Clear the database for the current user
-        conn = sqlite3.connect('prediction.db')
-        c = conn.cursor()
-        c.execute('DELETE FROM user_data WHERE username=?', (session['username'],))
-        conn.commit()
-        conn.close()
-        
-        return redirect(url_for('index'))
+        clear_user_workspace()  # Call the function to clear the database
+
+        session.pop('username', None)  # Clear the session
+        return redirect(url_for('login'))
 
     # Check if the database is empty
     conn = sqlite3.connect('prediction.db')
@@ -366,15 +367,7 @@ def clear_database():
     count = c.fetchone()[0]
     conn.close()
 
-    session['database_empty'] = True
-
-    print("Value of database_empty: ", session.get('database_empty'))
-
-    if count == 0:
-        return render_template('clear_database.html')
-
-    return render_template('clear_database.html')
-
+    return render_template('clear_database.html', database_empty=count == 0)
 
 
 def init_db():

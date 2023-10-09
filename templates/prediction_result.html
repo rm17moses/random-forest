@@ -71,26 +71,6 @@
     </div>
 
     <div class="container mb-3 text-center">
-        <h1>Results</h1>
-        <h2>Pollution Index</h2>
-        <p>The pollution index used to measure contamination for this model is the <b>Modified contamination factor
-                (mCdeg)</b></p>
-        <div x-show="!show" x-cloak>
-            <button x-on:click="show = !show" class="btn btn-info fw-bold my-3">Read more about the mCdeg</button>
-        </div>
-        <div x-show="show" x-cloak>
-            <button x-on:click="show = !show" class="btn btn-warning fw-bold">Close the section</button>
-            <p style="text-align: justify;">
-                Modified Contamination Factor is a multielement index used to assess soil and sediment contamination.
-                This classifies the soil on a seven-order scale of contamination, which is:
-                <b><em>very low contamination (mCdeg ≤ 1.5), Low contamination (1.5 ≤ mCdeg ≤ 2),
-                        Moderate contamination (2 ≤ mCdeg ≤ 4), High contamination (4 ≤ mCdeg ≤ 8), Very high
-                        contamination
-                        (8 ≤ mCdeg ≤ 16), Extremely high contamination (16 ≤ mCdeg ≤ 32), Ultra-high contamination (32 ≤
-                        mCdeg)</em></b> (
-                <b><u><a href="https://doi.org/10.1016/j.teac.2022.e00169">Source</a></u></b> ).
-            </p>
-        </div>
 
         <div x-cloak>
             <h1 class="mb-4">Predicted Contamination Level</h1>
